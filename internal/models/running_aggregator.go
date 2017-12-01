@@ -70,10 +70,6 @@ func (r *RunningAggregator) MakeMetric(
 		t,
 	)
 
-	if m != nil {
-		m.SetAggregate(true)
-	}
-
 	return m
 }
 

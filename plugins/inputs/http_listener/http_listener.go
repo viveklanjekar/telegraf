@@ -49,7 +49,7 @@ type HTTPListener struct {
 
 	listener net.Listener
 
-	parser influx.InfluxParser
+	parser influx.Parser
 	acc    telegraf.Accumulator
 	pool   *pool
 
@@ -321,7 +321,11 @@ func (h *HTTPListener) serveWrite(res http.ResponseWriter, req *http.Request) {
 }
 
 func (h *HTTPListener) parse(b []byte, t time.Time, precision string) error {
-	metrics, err := h.parser.ParseWithDefaultTimePrecision(b, t, precision)
+	// todo fix default time/precision
+	handler := influx.NewMetricHandler()
+	parser := influx.NewParser(handler)
+	metrics, err := parser.Parse(b)
+	//metrics, err := h.parser.ParseWithDefaultTimePrecision(b, t, precision)
 
 	for _, m := range metrics {
 		h.acc.AddFields(m.Name(), m.Fields(), m.Tags(), m.Time())

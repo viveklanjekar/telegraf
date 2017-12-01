@@ -227,18 +227,18 @@ func (p *Prometheus) gatherURL(u URLAndAddress, acc telegraf.Accumulator) error 
 			tags["address"] = u.Address
 		}
 
-		switch metric.Type() {
-		case telegraf.Counter:
-			acc.AddCounter(metric.Name(), metric.Fields(), tags, metric.Time())
-		case telegraf.Gauge:
-			acc.AddGauge(metric.Name(), metric.Fields(), tags, metric.Time())
-		case telegraf.Summary:
-			acc.AddSummary(metric.Name(), metric.Fields(), tags, metric.Time())
-		case telegraf.Histogram:
-			acc.AddHistogram(metric.Name(), metric.Fields(), tags, metric.Time())
-		default:
-			acc.AddFields(metric.Name(), metric.Fields(), tags, metric.Time())
-		}
+		// switch metric.Type() {
+		// case telegraf.Counter:
+		// 	acc.AddCounter(metric.Name(), metric.Fields(), tags, metric.Time())
+		// case telegraf.Gauge:
+		// 	acc.AddGauge(metric.Name(), metric.Fields(), tags, metric.Time())
+		// case telegraf.Summary:
+		// 	acc.AddSummary(metric.Name(), metric.Fields(), tags, metric.Time())
+		// case telegraf.Histogram:
+		// 	acc.AddHistogram(metric.Name(), metric.Fields(), tags, metric.Time())
+		// default:
+		acc.AddFields(metric.Name(), metric.Fields(), tags, metric.Time())
+		// }
 	}
 
 	return nil

@@ -34,17 +34,17 @@ deps:
 	go get github.com/sparrc/gdm
 	gdm restore
 
-telegraf:
+telegraf: plugins/parsers/influx/machine.go
 	go build -i -o $(TELEGRAF) -ldflags "$(LDFLAGS)" ./cmd/telegraf/telegraf.go
 
-go-install:
+go-install: plugins/parsers/influx/machine.go
 	go install -ldflags "-w -s $(LDFLAGS)" ./cmd/telegraf
 
 install: telegraf
 	mkdir -p $(DESTDIR)$(PREFIX)/bin/
 	cp $(TELEGRAF) $(DESTDIR)$(PREFIX)/bin/
 
-test:
+test: plugins/parsers/influx/machine.go
 	go test -short ./...
 
 fmt:
@@ -64,7 +64,7 @@ fmtcheck:
 lint:
 	golint ./...
 
-test-windows:
+test-windows: plugins/parsers/influx/machine.go
 	go test ./plugins/inputs/ping/...
 	go test ./plugins/inputs/win_perf_counters/...
 	go test ./plugins/inputs/win_services/...
@@ -81,7 +81,7 @@ vet:
 		exit 1; \
 	fi
 
-test-all: vet
+test-all: vet plugins/parsers/influx/machine.go
 	go test ./...
 
 package:
@@ -95,5 +95,8 @@ docker-image:
 	./scripts/build.py --package --platform=linux --arch=amd64
 	cp build/telegraf*$(COMMIT)*.deb .
 	docker build -f scripts/dev.docker --build-arg "package=telegraf*$(COMMIT)*.deb" -t "telegraf-dev:$(COMMIT)" .
+
+plugins/parsers/influx/machine.go: Makefile  plugins/parsers/influx/machine.rl
+	cd plugins/parsers/influx && ragel -Z -G2 machine.rl -o machine.go
 
 .PHONY: deps telegraf install test test-windows lint vet test-all package clean docker-image fmtcheck

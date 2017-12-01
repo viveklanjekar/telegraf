@@ -9,7 +9,6 @@ import (
 
 	"github.com/influxdata/telegraf"
 	"github.com/influxdata/telegraf/internal"
-	"github.com/influxdata/telegraf/metric"
 	"github.com/influxdata/telegraf/plugins/outputs"
 
 	"github.com/influxdata/telegraf/plugins/outputs/influxdb/client"
@@ -183,64 +182,65 @@ func (i *InfluxDB) Description() string {
 // Write will choose a random server in the cluster to write to until a successful write
 // occurs, logging each unsuccessful. If all servers fail, return error.
 func (i *InfluxDB) Write(metrics []telegraf.Metric) error {
-	r := metric.NewReader(metrics)
+	// r := metric.NewReader(metrics)
 
-	// This will get set to nil if a successful write occurs
-	err := fmt.Errorf("Could not write to any InfluxDB server in cluster")
+	// // This will get set to nil if a successful write occurs
+	// err := fmt.Errorf("Could not write to any InfluxDB server in cluster")
 
-	p := rand.Perm(len(i.clients))
-	for _, n := range p {
-		if e := i.clients[n].WriteStream(r); e != nil {
-			// If the database was not found, try to recreate it:
-			if strings.Contains(e.Error(), "database not found") {
-				errc := i.clients[n].Query(fmt.Sprintf(`CREATE DATABASE "%s"`, qiReplacer.Replace(i.Database)))
-				if errc != nil {
-					log.Printf("E! Error: Database %s not found and failed to recreate\n",
-						i.Database)
-				}
-			}
+	// p := rand.Perm(len(i.clients))
+	// for _, n := range p {
+	// 	if e := i.clients[n].WriteStream(r); e != nil {
+	// 		// If the database was not found, try to recreate it:
+	// 		if strings.Contains(e.Error(), "database not found") {
+	// 			errc := i.clients[n].Query(fmt.Sprintf(`CREATE DATABASE "%s"`, qiReplacer.Replace(i.Database)))
+	// 			if errc != nil {
+	// 				log.Printf("E! Error: Database %s not found and failed to recreate\n",
+	// 					i.Database)
+	// 			}
+	// 		}
 
-			if strings.Contains(e.Error(), "field type conflict") {
-				log.Printf("E! Field type conflict, dropping conflicted points: %s", e)
-				// setting err to nil, otherwise we will keep retrying and points
-				// w/ conflicting types will get stuck in the buffer forever.
-				err = nil
-				break
-			}
+	// 		if strings.Contains(e.Error(), "field type conflict") {
+	// 			log.Printf("E! Field type conflict, dropping conflicted points: %s", e)
+	// 			// setting err to nil, otherwise we will keep retrying and points
+	// 			// w/ conflicting types will get stuck in the buffer forever.
+	// 			err = nil
+	// 			break
+	// 		}
 
-			if strings.Contains(e.Error(), "points beyond retention policy") {
-				log.Printf("W! Points beyond retention policy: %s", e)
-				// This error is indicates the point is older than the
-				// retention policy permits, and is probably not a cause for
-				// concern.  Retrying will not help unless the retention
-				// policy is modified.
-				err = nil
-				break
-			}
+	// 		if strings.Contains(e.Error(), "points beyond retention policy") {
+	// 			log.Printf("W! Points beyond retention policy: %s", e)
+	// 			// This error is indicates the point is older than the
+	// 			// retention policy permits, and is probably not a cause for
+	// 			// concern.  Retrying will not help unless the retention
+	// 			// policy is modified.
+	// 			err = nil
+	// 			break
+	// 		}
 
-			if strings.Contains(e.Error(), "unable to parse") {
-				log.Printf("E! Parse error; dropping points: %s", e)
-				// This error indicates a bug in Telegraf or InfluxDB parsing
-				// of line protocol.  Retries will not be successful.
-				err = nil
-				break
-			}
+	// 		if strings.Contains(e.Error(), "unable to parse") {
+	// 			log.Printf("E! Parse error; dropping points: %s", e)
+	// 			// This error indicates a bug in Telegraf or InfluxDB parsing
+	// 			// of line protocol.  Retries will not be successful.
+	// 			err = nil
+	// 			break
+	// 		}
 
-			if strings.Contains(e.Error(), "hinted handoff queue not empty") {
-				// This is an informational message
-				err = nil
-				break
-			}
+	// 		if strings.Contains(e.Error(), "hinted handoff queue not empty") {
+	// 			// This is an informational message
+	// 			err = nil
+	// 			break
+	// 		}
 
-			// Log write failure
-			log.Printf("E! InfluxDB Output Error: %s", e)
-		} else {
-			err = nil
-			break
-		}
-	}
+	// 		// Log write failure
+	// 		log.Printf("E! InfluxDB Output Error: %s", e)
+	// 	} else {
+	// 		err = nil
+	// 		break
+	// 	}
+	// }
 
-	return err
+	// return err
+	return nil
 }
 
 func newInflux() *InfluxDB {

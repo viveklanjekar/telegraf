@@ -86,7 +86,8 @@ func Parse(buf []byte, header http.Header) ([]telegraf.Metric, error) {
 				} else {
 					t = time.Now()
 				}
-				metric, err := metric.New(metricName, tags, fields, t, valueType(mf.GetType()))
+				// FIXME: valueType(mf.GetType())
+				metric, err := metric.New(metricName, tags, fields, t)
 				if err == nil {
 					metrics = append(metrics, metric)
 				}

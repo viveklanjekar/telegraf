@@ -66,7 +66,7 @@ func NewJsonSerializer(timestampUnits time.Duration) (Serializer, error) {
 }
 
 func NewInfluxSerializer() (Serializer, error) {
-	return &influx.InfluxSerializer{}, nil
+	return influx.NewSerializer(0), nil
 }
 
 func NewGraphiteSerializer(prefix, template string) (Serializer, error) {
